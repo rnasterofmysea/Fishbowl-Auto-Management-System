@@ -22,10 +22,18 @@ Auto management system using RasiberryPi4, Arduino
 
   - Measuring turbidity & sensor to judge water pollution degree
   - Operating water pump if water pullution degree is over
-  - Absorbing water from water tank (which planted water plant)
+  - Absorbing water from water tank (which planted waterplant)
   
 ## 4. Water Level Management System
+
+  - Measuring water level
+  - Operating water pump if water level is lower than common level
+  - If water level is not filled, alert user to notice it
+
 ## 5. PH Level Management System
+
+ - Measuring & monitoring PH level
+ - If ph level is caution level, drop water quality medicine
 
 # System Configuration
 
