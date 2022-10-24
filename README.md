@@ -14,9 +14,18 @@ Auto management system using RasiberryPi4, Arduino
   - Monitoring by senior monitor and controling survo motor to handel heater
   
 ## 2. Feeding System
+
+  - Set feeding time
+  - Controling servo motor to dorp feed from the box
+  
 ## 3. Filtering System
+
+  - Measuring turbidity & sensor to judge water pollution degree
+  - Operating water pump if water pullution degree is over
+  - Absorbing water from water tank (which planted water plant)
+  
 ## 4. Water Level Management System
-## 5. PH Level MAnagement System
+## 5. PH Level Management System
 
 # System Configuration
 
