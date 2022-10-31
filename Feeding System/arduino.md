@@ -1,3 +1,4 @@
+```C
 #include <SoftwareSerial.h>
 
 #include "SimpleTimer.h"
@@ -38,4 +39,4 @@ void loop()
 {
   timer.run()//timer 실행
 }
-  
+```
