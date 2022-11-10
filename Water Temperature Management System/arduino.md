@@ -12,17 +12,21 @@ Stepper myStepper(stepsPerRevolution,11,9,10,8);
 int rotation = 0;
 int post_temp = 30;
 
+int max_temp = 0;
+int min_temp = 0;
+
+
 void default_setting(){
 
-  int min_temp = 20;
-  int max_temp = 34;
+  min_temp = 20;
+  max_temp = 34;
   int default_temp = 25;
   //1도가 움직일때 0.6
   // open issue: 소수점 몇째짜리까지 되는지 모름
   rotation = stepsPerRevolution / (max_temp - min_temp);
-  myStepper.step(rotation * default_temp);
+  myStepper.step(rotation * (default_temp - min_temp));
   Serial.print("초기값");
-  Serial.println(rotation * default_temp);
+  Serial.println(rotation * (default_temp - min_temp));
   delay(5000);
 }
 
@@ -35,6 +39,7 @@ void setup(){
   pinMode(TEMP_PIN, INPUT);
   
   //step motor 속도 설정
+  myStepper.setSpeed(14);
 
   // 서보모터 0도 초기화
   Serial.print("초기화+++++");
@@ -51,17 +56,29 @@ void loop(){
 
   float compare_temp = temp - post_temp;
   
-  if(compare_temp > 0){
+  if(temp > max_temp){
+    compare_temp = max_temp - temp;
     myStepper.step(rotation * compare_temp);
-  }else{
-    myStepper.step(-rotation * compare_temp);
+    post_temp = max_temp;
+  } else if (temp <min_temp){ 
+      compare_temp = min_temp - temp;
+      myStepper.step(rotation * compare_temp);
+      post_temp = min_temp;
+  } else{
+    if(compare_temp > 0){
+      myStepper.step(rotation * compare_temp);
+      post_temp = temp;
+    }else{
+      myStepper.step(-rotation * compare_temp);
+      post_temp = temp;
+    }
   }
   
   Serial.print("온도차 ::");
   Serial.print(compare_temp);
   Serial.print(" 움직인 각도:: " );
   Serial.println(rotation * compare_temp);
-  post_temp = temp;
+
   delay(3000);
 
 }
