@@ -1,7 +1,16 @@
-```C
+```c
+#include <OneWire.h>
+#include <DallasTemperature.h>
 #include <Stepper.h>
 
-#define TEMP_PIN A0
+#define ONE_WIRE_BUS 2
+
+
+//Setup a oneWire instance to communicate with any OneWire device
+OneWire oneWire(ONE_WIRE_BUS);
+
+//Pass oneWire referance to DallasTemperature library
+DallasTemperature sensors(&oneWire);
 
 // 2048:한바퀴(360도), 1024:반바퀴(180도)...
 const int stepsPerRevolution = 2048; 
@@ -31,13 +40,13 @@ void default_setting(){
 }
 
 void setup(){
-  
+
+  // 온도 센서 설정
+  sensors.begin(); //Start up the libratry
+
   //시리얼 모니터
   Serial.begin(9600);
 
-  // 온도 센서 설정
-  pinMode(TEMP_PIN, INPUT);
-  
   //step motor 속도 설정
   myStepper.setSpeed(14);
 
@@ -49,9 +58,14 @@ void setup(){
 }
 
 void loop(){
+  // int voltage = analogRead(TEMP_PIN);
+  // float temp = voltage * 5.0 * 100 / 1024;
 
-  int voltage = analogRead(TEMP_PIN);
-  float temp = voltage * 5.0 * 100 / 1024;
+  // Send the command to get temperatures
+  sensors.requestTemperatures(); 
+  float temp = sensors.getTempCByIndex(0);
+  Serial.print("\xe2\x84\x83");
+  
   Serial.println(temp);
 
   float compare_temp = temp - post_temp;
@@ -64,7 +78,7 @@ void loop(){
       compare_temp = min_temp - temp;
       myStepper.step(rotation * compare_temp);
       post_temp = min_temp;
-  } else{
+  } else{ 
     if(compare_temp > 0){
       myStepper.step(rotation * compare_temp);
       post_temp = temp;
