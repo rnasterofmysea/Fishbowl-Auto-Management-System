@@ -2,15 +2,17 @@
 #include <OneWire.h> //수온센서 라이브러리
 #include <DallasTemperature.h> //수온센서 라이브러리
 #include <Stepper.h> //스탭모터
+#include <Servo.h> //서보모터
 
 //수온센서 연결된 핀
-#define ONE_WIRE_BUS 2 
+#define ONE_WIRE_BUS 2
 
 //탁도센서 연결된 핀
 #define TAKDO A1
 //워터펌프 연결된 핀
 #define WATERPUMP_1 6
 #define WATERPUMP_2 7
+#define SERVO 12
 
 //Setup a oneWire instance to communicate with any OneWire device
 OneWire oneWire(ONE_WIRE_BUS);
@@ -19,7 +21,7 @@ OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
 
 // 2048:한바퀴(360도), 1024:반바퀴(180도)...
-const int stepsPerRevolution = 2048; 
+const int stepsPerRevolution = 2048;
 
 // 모터 드라이브에 연결된 핀 IN4, IN2, IN3, IN1
 Stepper myStepper(stepsPerRevolution,11,9,10,8);
@@ -30,6 +32,8 @@ int post_temp = 30;
 int max_temp = 0;
 int min_temp = 0;
 
+// Servo motor Configuration
+Servo servo;
 
 //온도 초기 세팅
 void default_temperature(int default_temp){
@@ -40,7 +44,8 @@ void default_temperature(int default_temp){
   // open issue: 소수점 몇째짜리까지 되는지 모름
   rotation = stepsPerRevolution / (max_temp - min_temp);
   myStepper.step(rotation * (default_temp - min_temp));
-  Serial.print(rotation * (default_temp - min_temp));
+  Serial.print("초기값");
+  Serial.println(rotation * (default_temp - min_temp));
 }
 
 //환수 시스템
@@ -48,7 +53,7 @@ void filtering_management(){
   //탁도 데이터
   int takdo_data = analogRead(TAKDO);
   takdo_data = takdo_data * 2;
-  Serial.print(takdo_data);
+  Serial.println(takdo_data);
   
   //탁도가 기준을 넘어갔을 경우
   if(takdo_data < 1600){
@@ -96,19 +101,22 @@ void temperature_management(){
     }
   }
   
-  //Serial.print("온도차 ::");
-  //Serial.print(compare_temp);
-  //Serial.print(" 움직인 각도:: " );
-  //Serial.println(rotation * compare_temp);
+  Serial.print("온도차 ::");
+  Serial.print(compare_temp);
+  Serial.print(" 움직인 각도:: " );
+  Serial.println(rotation * compare_temp);
 
-  //delay(3000);
+  delay(3000);
 
 }
 
 
 //먹이배급 함수
-void feeding_system(){
-  Serial.println("feedingSystem");
+void feeding_management(){
+  Serial.println("servo_test");
+  servo.write(180);
+  delay(500);
+  servo.write(0);
 }
 
 void setup(){
@@ -123,12 +131,15 @@ void setup(){
   myStepper.setSpeed(14);
 
   // 서보모터 0도 초기화
-  Serial.print("초기화+++++");
+  servo.attach(SERVO);
+  servo.write(0);
   
 
   pinMode(TAKDO,INPUT); //탁도센서 A1핀 입력
   pinMode(WATERPUMP_1,OUTPUT); //워터펌프1 OUTPUT
   pinMode(WATERPUMP_2,OUTPUT); //워터펌프2 OUTPUT
+
+  Serial.println("Ready to Shot");
 }
 
 void loop(){
@@ -137,21 +148,18 @@ void loop(){
   
   // serial 포트에 들어온 데이터가 있을 경우
   if(Serial.available() > 0){
-     String inputStr = Serial.readString(); //값 읽기
-     Serial.print(inputStr);
+    String inputStr = Serial.readString(); //값 읽기
+    inputStr.trim();
+    Serial.println(inputStr);
      if(inputStr.indexOf(".") >= 0){
-        
-        inputStr = inputStr.substring(1,inputStr.length());
-        Serial.print(inputStr);
+        inputStr.replace(inputStr, "");
         default_temperature(inputStr.toInt());
-        Serial.print("complete");
      } else if(inputStr.equals("temperature")){
         temperature_management();
      } else if(inputStr.equals("filtering")){
-        //수정해야함
         filtering_management();
      } else if(inputStr.equals("feeding")){
-      //  feeding_management();
+        feeding_management();
      }
     }
   }
