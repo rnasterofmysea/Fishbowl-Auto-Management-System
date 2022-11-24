@@ -40,3 +40,35 @@ void loop()
   timer.run()//timer 실행
 }
 ```
+
+##Feeding Servo rotation test
+
+
+```
+#include <Servo.h>
+
+Servo servo;
+
+void setup() {
+  
+  //시리얼 모니터
+  Serial.begin(9600);
+  servo.attach(12);
+  servo.write(0);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  String readline = Serial.readString();
+  Serial.println(readline.toInt());
+  if (readline == 0){
+    servo.write(180);
+    delay(500);
+    servo.write(0);
+  }
+  else{
+    
+  }
+}
+
+```
