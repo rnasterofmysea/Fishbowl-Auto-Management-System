@@ -1,4 +1,4 @@
-```
+```C
 #include <OneWire.h> //수온센서 라이브러리
 #include <DallasTemperature.h> //수온센서 라이브러리
 #include <Stepper.h> //스탭모터
@@ -9,9 +9,15 @@
 
 //탁도센서 연결된 핀
 #define TAKDO A1
-//워터펌프 연결된 핀
+
+// 워터펌프 화분 => 어항
+#define WATERPUMP_3 4
+#define WATERPUMP_4 5
+ 
+// 워터펌프 어항 => 화분
 #define WATERPUMP_1 6
 #define WATERPUMP_2 7
+
 #define SERVO 12
 
 //Setup a oneWire instance to communicate with any OneWire device
@@ -43,9 +49,9 @@ void default_temperature(int default_temp){
   //1도가 움직일때 0.6
   // open issue: 소수점 몇째짜리까지 되는지 모름
   rotation = stepsPerRevolution / (max_temp - min_temp);
-  myStepper.step(rotation * (default_temp - min_temp));
-  Serial.print("초기값");
-  Serial.println(rotation * (default_temp - min_temp));
+  // - => 하강
+  // + => 상승
+  myStepper.step(rotation * (default_temp - min_temp + 1.5));
 }
 
 //환수 시스템
@@ -59,12 +65,21 @@ void filtering_management(){
   if(takdo_data < 1600){
 
     //워터펌프 가동
+    //어항 => 화분
     digitalWrite(WATERPUMP_1,HIGH);
     digitalWrite(WATERPUMP_2,LOW);
+
+    //화분 => 어항
+    digitalWrite(WATERPUMP_3,HIGH);
+    digitalWrite(WATERPUMP_4,LOW);
   } else {
-    //워터펌프 멈춤
+    //어항 => 화분
     digitalWrite(WATERPUMP_1,LOW);
     digitalWrite(WATERPUMP_2,LOW);
+
+    //화분 => 어항
+    digitalWrite(WATERPUMP_3,LOW);
+    digitalWrite(WATERPUMP_4,LOW);
   }
   
 }
@@ -106,7 +121,7 @@ void temperature_management(){
   Serial.print(" 움직인 각도:: " );
   Serial.println(rotation * compare_temp);
 
-  delay(3000);
+  // delay(3000);
 
 }
 
@@ -128,16 +143,18 @@ void setup(){
   Serial.begin(9600);
 
   //step motor 속도 설정
-  myStepper.setSpeed(14);
+  myStepper.setSpeed(2);
 
   // 서보모터 0도 초기화
   servo.attach(SERVO);
   servo.write(0);
   
-
   pinMode(TAKDO,INPUT); //탁도센서 A1핀 입력
   pinMode(WATERPUMP_1,OUTPUT); //워터펌프1 OUTPUT
   pinMode(WATERPUMP_2,OUTPUT); //워터펌프2 OUTPUT
+
+  pinMode(WATERPUMP_3,OUTPUT); //워터펌프3 OUTPUT
+  pinMode(WATERPUMP_4,OUTPUT); //워터펌프4 OUTPUT
 
   Serial.println("Ready to Shot");
 }
@@ -150,14 +167,16 @@ void loop(){
   if(Serial.available() > 0){
     String inputStr = Serial.readString(); //값 읽기
     inputStr.trim();
-    Serial.println(inputStr);
      if(inputStr.indexOf(".") >= 0){
-        inputStr.replace(inputStr, "");
+        inputStr = inputStr.substring(1, inputStr.length());
         default_temperature(inputStr.toInt());
+
      } else if(inputStr.equals("temperature")){
         temperature_management();
+
      } else if(inputStr.equals("filtering")){
         filtering_management();
+
      } else if(inputStr.equals("feeding")){
         feeding_management();
      }
