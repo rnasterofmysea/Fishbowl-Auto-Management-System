@@ -1,4 +1,4 @@
-```C
+```
 #include <OneWire.h> //수온센서 라이브러리
 #include <DallasTemperature.h> //수온센서 라이브러리
 #include <Stepper.h> //스탭모터
@@ -40,8 +40,7 @@ void default_temperature(int default_temp){
   // open issue: 소수점 몇째짜리까지 되는지 모름
   rotation = stepsPerRevolution / (max_temp - min_temp);
   myStepper.step(rotation * (default_temp - min_temp));
-  Serial.print("초기값");
-  Serial.println(rotation * (default_temp - min_temp));
+  Serial.print(rotation * (default_temp - min_temp));
 }
 
 //환수 시스템
@@ -49,7 +48,7 @@ void filtering_management(){
   //탁도 데이터
   int takdo_data = analogRead(TAKDO);
   takdo_data = takdo_data * 2;
-  Serial.println(takdo_data);
+  Serial.print(takdo_data);
   
   //탁도가 기준을 넘어갔을 경우
   if(takdo_data < 1600){
@@ -97,19 +96,19 @@ void temperature_management(){
     }
   }
   
-  Serial.print("온도차 ::");
-  Serial.print(compare_temp);
-  Serial.print(" 움직인 각도:: " );
-  Serial.println(rotation * compare_temp);
+  //Serial.print("온도차 ::");
+  //Serial.print(compare_temp);
+  //Serial.print(" 움직인 각도:: " );
+  //Serial.println(rotation * compare_temp);
 
-  delay(3000);
+  //delay(3000);
 
 }
 
 
 //먹이배급 함수
 void feeding_system(){
-
+  Serial.println("feedingSystem");
 }
 
 void setup(){
@@ -125,7 +124,7 @@ void setup(){
 
   // 서보모터 0도 초기화
   Serial.print("초기화+++++");
-  delay(2000);
+  
 
   pinMode(TAKDO,INPUT); //탁도센서 A1핀 입력
   pinMode(WATERPUMP_1,OUTPUT); //워터펌프1 OUTPUT
@@ -134,22 +133,26 @@ void setup(){
 
 void loop(){
 
-  filtering_management();
+  //filtering_management();
   
   // serial 포트에 들어온 데이터가 있을 경우
   if(Serial.available() > 0){
      String inputStr = Serial.readString(); //값 읽기
-
-     if(inputStr.indexOf(".") > 0){
-        inputStr.replace(inputStr, "");
+     Serial.print(inputStr);
+     if(inputStr.indexOf(".") >= 0){
+        
+        inputStr = inputStr.substring(1,inputStr.length());
+        Serial.print(inputStr);
         default_temperature(inputStr.toInt());
+        Serial.print("complete");
      } else if(inputStr.equals("temperature")){
         temperature_management();
      } else if(inputStr.equals("filtering")){
+        //수정해야함
         filtering_management();
      } else if(inputStr.equals("feeding")){
       //  feeding_management();
      }
     }
   }
-  ```
+```
