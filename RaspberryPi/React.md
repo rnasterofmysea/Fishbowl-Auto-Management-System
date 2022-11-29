@@ -26,9 +26,7 @@ sudo npm install -g create-react-app
  create-react-app [project-name]
 ```
 
-
-
-##App.js
+## App.js
 
 ```
 
@@ -76,7 +74,7 @@ function App() {
 export default App;
 ```
 
-##Component
+## Component
 
 ## ButtonTemplate.js
 ```
