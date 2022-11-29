@@ -1,3 +1,33 @@
+# Install Nodejs & React.js in Ubuntu/Debian
+(https://github.com/nodesource/distributions)
+
+## NodeJs 19.X version install
+
+```
+curl -fsSL https://deb.nodesource.com/setup_19.x | sudo -E bash - &&\
+sudo apt-get install -y nodejs
+```
+
+```
+sudo apt-get install build-essential
+```
+
+## Build React
+
+### npm install react build library
+
+```
+sudo npm install -g create-react-app
+```
+
+### make a project
+
+```
+ create-react-app [project-name]
+```
+
+
+
 ##App.js
 
 ```
