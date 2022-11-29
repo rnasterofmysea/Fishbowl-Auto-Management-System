@@ -1,4 +1,4 @@
-```C
+```
 #include <OneWire.h> //수온센서 라이브러리
 #include <DallasTemperature.h> //수온센서 라이브러리
 #include <Stepper.h> //스탭모터
@@ -53,7 +53,7 @@ void default_temperature(int default_temp){
   // + => 상승
   myStepper.step(rotation * (default_temp - min_temp + 1.5));
 
-  Serial.println("end point");
+  Serial.println("end_point");
 }
 
 //환수 시스템
@@ -84,7 +84,7 @@ void filtering_management(){
   }
   // /filtering_management/now_value/{data}
   Serial.println("/filtering_management/now_value/" + takdo_data);
-  Serial.println("end point");
+  Serial.println("end_point");
 }
 
 //온도 관리 시스템
@@ -130,7 +130,7 @@ void temperature_management(){
   Serial.println((String) "/temperautre_management/now_value/" + temp);
   Serial.println((String) "/temperautre_management/diff_value/" + compare_temp);
   Serial.println((String)  "/temperautre_management/rotation_value/" + rotation * compare_temp);
-  Serial.println("end point");
+  Serial.println("end_point");
 }
 
 
@@ -141,7 +141,7 @@ void feeding_management(){
   delay(500);
   servo.write(0);
 
-  Serial.println("end point");
+  Serial.println("end_point");
 }
 
 void setup(){
