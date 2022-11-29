@@ -52,6 +52,8 @@ void default_temperature(int default_temp){
   // - => 하강
   // + => 상승
   myStepper.step(rotation * (default_temp - min_temp + 1.5));
+
+  Serial.println("end point");
 }
 
 //환수 시스템
@@ -59,10 +61,9 @@ void filtering_management(){
   //탁도 데이터
   int takdo_data = analogRead(TAKDO);
   takdo_data = takdo_data * 2;
-  Serial.println(takdo_data);
-  
+   
   //탁도가 기준을 넘어갔을 경우
-  if(takdo_data < 1600){
+  if(takdo_data < 1600) {
 
     //워터펌프 가동
     //어항 => 화분
@@ -81,7 +82,9 @@ void filtering_management(){
     digitalWrite(WATERPUMP_3,LOW);
     digitalWrite(WATERPUMP_4,LOW);
   }
-  
+  // /filtering_management/now_value/{data}
+  Serial.println("/filtering_management/now_value/" + takdo_data);
+  Serial.println("end point");
 }
 
 //온도 관리 시스템
@@ -94,7 +97,7 @@ void temperature_management(){
   float temp = sensors.getTempCByIndex(0);
   Serial.print("\xe2\x84\x83");
   
-  Serial.println(temp);
+  // Serial.println(temp);
 
   float compare_temp = temp - post_temp;
   
@@ -116,13 +119,18 @@ void temperature_management(){
     }
   }
   
-  Serial.print("온도차 ::");
-  Serial.print(compare_temp);
-  Serial.print(" 움직인 각도:: " );
-  Serial.println(rotation * compare_temp);
+  // Serial.print("온도차 ::");
+  // Serial.print(compare_temp);
+  // Serial.print(" 움직인 각도:: " );
+  // Serial.println(rotation * compare_temp);
 
-  // delay(3000);
-
+  // /temperautre_management/now_value/{data}
+  // /temperautre_management/diff_value/{data}
+  // /temperautre_management/rotation_value/{data}
+  Serial.println((String) "/temperautre_management/now_value/" + temp);
+  Serial.println((String) "/temperautre_management/diff_value/" + compare_temp);
+  Serial.println((String)  "/temperautre_management/rotation_value/" + rotation * compare_temp);
+  Serial.println("end point");
 }
 
 
@@ -132,6 +140,8 @@ void feeding_management(){
   servo.write(180);
   delay(500);
   servo.write(0);
+
+  Serial.println("end point");
 }
 
 void setup(){
