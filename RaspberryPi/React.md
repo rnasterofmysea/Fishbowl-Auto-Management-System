@@ -26,6 +26,12 @@ sudo npm install -g create-react-app
  create-react-app [project-name]
 ```
 
+### Start Project
+
+```
+npm start
+```
+
 ## App.js
 
 ```
