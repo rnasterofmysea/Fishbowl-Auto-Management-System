@@ -19,8 +19,8 @@ import serial
 arduino = serial.Serial(port='COM4', baudrate=9600)
 
 def serialTest(default_value):
-
-    arduino.write(str(default_value).encode())
+    result = "." + str(default_value)
+    arduino.write(result.encode())
 
     if arduino.readable():
 
